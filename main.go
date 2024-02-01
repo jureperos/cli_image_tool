@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+    // TODO: Implement relative resizing operation
+    // TODO: Implement flag for resizing all images in a directory
 
     myFlagVal := myFlags.Init()
     log.Printf(`
@@ -23,6 +25,7 @@ func main() {
     if err != nil {
         log.Fatalf("Failed to open %v", err)
     }
+
 
     if myFlagVal.ResizeW > 0 || myFlagVal.ResizeH > 0 {
         inputImage = imaging.Resize(inputImage, myFlagVal.ResizeW, myFlagVal.ResizeH,

@@ -2,8 +2,6 @@ package myFlags
 
 import (
     "flag"
-    "log"
-    "os"
 )
 
 type FlagValues struct {
@@ -31,15 +29,6 @@ func Init() FlagValues {
 
     flag.Parse()
 
-
-    if *inputImagePath == "" {
-        log.Fatal("Error: No input path provided")
-    }
-
-    if _, err := os.Stat(*inputImagePath); err != nil {
-        log.Fatal("Error: Input image path not found")
-    }
-
     MyFlagVal := FlagValues{
        InImgPath: *inputImagePath,
        OutImgPath: *outputImagePath,
@@ -48,6 +37,13 @@ func Init() FlagValues {
        ResizeRel: *relativeResize,
        Format: *format,
     }
+
+    allFlagsP := &MyFlagVal
+
+    HandleArgs(allFlagsP)
+    HandleInImgPath(*inputImagePath)
+    HandleResizeRel(*inputImagePath)
+
 
     return MyFlagVal
 }
