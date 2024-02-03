@@ -1,24 +1,25 @@
 # cli_image_tool
-A simple cli application for resizing images
 
-The cli tool runs the go imaging package under the hood (github.com/disintegration/imaging).
+A simple CLI application for resizing images.
 
-To use the tool compile the program or use go run . and add flags for desired functionality.
+The CLI tool runs the Go imaging package under the hood ([github.com/disintegration/imaging](https://github.com/disintegration/imaging)).
 
-The tool works but is in the middle of development. New features and bug fixes are in development.
+To use the tool, compile the program or use `go run .` and add flags for the desired functionality. The tool is a work in progress, with new features and bug fixes in development.
 
-Flags:
-  -in
-    input path(e.g. -in ./myImage.jpg)
-    
-  -out
-    outupt path, name and desired format (e.g. -out ./some_folder/resizedImage.png)
+## Flags:
 
-  -width
-    desired width of image (e.g. -width 580)
+- **-in**
+  - Input path (e.g., `-in ./myImage.jpg`)
 
-  -height
-      desired height of image (e.g. -height 400)
+- **-out**
+  - Output path, name, and desired format (e.g., `-out ./some_folder/resizedImage.png`)
 
-  -rel
-    resize image relative to the original (e.g. -rel 0.5)
+- **-width**
+  - Desired width of the image (e.g., `-width 580`)
+
+- **-height**
+  - Desired height of the image (e.g., `-height 400`)
+
+- **-rel**
+  - Resize image relative to the original (e.g., `-rel 0.5`)
+
