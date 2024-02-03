@@ -2,6 +2,7 @@ package myFlags
 
 import (
     "flag"
+    "log"
 )
 
 type FlagValues struct {
@@ -13,7 +14,9 @@ type FlagValues struct {
     Format string
 }
 
-func Init() FlagValues {
+var MyFlagVal FlagValues
+
+func Init() {
 
     inputImagePath := flag.String("in", "./", "Path to the input file")
 
@@ -29,7 +32,7 @@ func Init() FlagValues {
 
     flag.Parse()
 
-    MyFlagVal := FlagValues{
+    MyFlagVal = FlagValues{
        InImgPath: *inputImagePath,
        OutImgPath: *outputImagePath,
        ResizeW: *resizeWidth,
@@ -38,12 +41,24 @@ func Init() FlagValues {
        Format: *format,
     }
 
-    allFlagsP := &MyFlagVal
 
-    HandleArgs(allFlagsP)
-    HandleInImgPath(*inputImagePath)
-    HandleResizeRel(*inputImagePath)
+    log.Printf(`
+    Input path: %v
+    Output path: %v
+    Width: %v
+    Height: %v
+    Float: %v
+    Format: %v`,
+    MyFlagVal.InImgPath, MyFlagVal.OutImgPath, MyFlagVal.ResizeW,
+    MyFlagVal.ResizeH, MyFlagVal.ResizeRel, MyFlagVal.Format)
+
+    if MyFlagVal.InImgPath == "./"{
+        log.Fatal("No input image provided")
+    }
 
 
-    return MyFlagVal
+    if MyFlagVal.OutImgPath == "./"{
+        log.Fatal("No output name provided")
+    }
+
 }
