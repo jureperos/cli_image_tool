@@ -1,36 +1,36 @@
 package myFlags
 
 import (
-	"bufio"
-	"image"
-	"log"
-	"os"
-	"github.com/disintegration/imaging"
+    "bufio"
+    "image"
+    "log"
+    "os"
+
+    "github.com/disintegration/imaging"
 )
 
-var inImage image.Image
-var err error
-func HandleArgs() {
+var (
+    inImage image.Image
+    err     error
+)
 
+func HandleArgs() {
     // Call imaging module to resize
     inImage, err = imaging.Open(MyFlagVal.InImgPath)
     if err != nil {
         log.Fatalf("Failed to open %v", err)
-}
-
+    }
 
     if MyFlagVal.ResizeH > 0 || MyFlagVal.ResizeW > 0 {
-        if MyFlagVal.ResizeRel != 0  {
-            log.Fatal(`Error: Cannot have output width or height (-w, -h)
-            specified together with relative output size (-f flag).
-            Choose one or the other.`)
+        if MyFlagVal.ResizeRel != 0 {
+            log.Fatal("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-f flag).\nChoose one or the other.")
         } else {
             HandleResize(MyFlagVal.ResizeW, MyFlagVal.ResizeH)
             return
         }
     }
 
-    if MyFlagVal.ResizeRel != 0  {
+    if MyFlagVal.ResizeRel != 0 {
         HandleResizeRel()
         return
     }
@@ -40,14 +40,12 @@ func HandleArgs() {
 }
 
 func HandleResize(ImgWidth int, ImgHeight int) {
-
     resizedImg := imaging.Resize(inImage, ImgWidth, ImgHeight, imaging.Lanczos)
 
     err := imaging.Save(resizedImg, MyFlagVal.OutImgPath)
     if err != nil {
         log.Fatal("Error saving resized image", err)
     }
-
 }
 
 func HandleResizeRel() {
@@ -100,5 +98,4 @@ func HandleFormat() {
     if err != nil {
         log.Fatal("Error could not encode image", err)
     }
-
 }
