@@ -1,11 +1,10 @@
 package main
 
 import (
-	myFlags "image_resize/flags"
+    myFlags "image_resize/flags"
 )
 
 func main() {
-    // TODO: Implement relative resizing operation
     // TODO: Implement flag for resizing all images in a directory
 
     // initialize flags
@@ -13,5 +12,4 @@ func main() {
 
     // Handle reformatting flow
     myFlags.HandleArgs()
-
 }
