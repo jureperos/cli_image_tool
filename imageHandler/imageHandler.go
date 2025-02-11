@@ -5,12 +5,13 @@ import (
 	"image"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/disintegration/imaging"
 )
 
 // TODO:Handle resizing to different formats than input format
-func openImage(inImgPath string) *image.Image {
+func openImg(inImgPath string) *image.Image {
 	input, err := imaging.Open(inImgPath)
 	if err != nil {
 		log.Fatalf("Failed to open %v", err)
@@ -19,8 +20,37 @@ func openImage(inImgPath string) *image.Image {
 	return &input
 }
 
+func isValidFormat(filename string) bool {
+	_, err := imaging.FormatFromFilename(filename)
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
+func getImageOutPath(inImg string, outDir string) string {
+	return outDir + inImg
+}
+
+func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
+	files, _ := os.ReadDir(inDir)
+
+	for _, file := range files {
+		filename := file.Name()
+
+		filename = strings.TrimPrefix(filename, "- ")
+
+		if isValidFormat(filename) {
+			outPath := getImageOutPath(filename, outDir)
+			go HandleResize(ImgWidth, ImgHeight, filename, outPath)
+		}
+	}
+}
+
 func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) {
-	inImage := openImage(inputPath)
+	inImage := openImg(inputPath)
+	log.Println("opica")
 	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
 
 	err := imaging.Save(resizedImg, imgOutPath)
