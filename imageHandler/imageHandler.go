@@ -34,7 +34,10 @@ func getImageOutPath(inImg string, outDir string) string {
 }
 
 func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
-	files, _ := os.ReadDir(inDir)
+	files, err := os.ReadDir(inDir)
+	if err != nil {
+		log.Panic("Could not get current directory info")
+	}
 
 	for _, file := range files {
 		filename := file.Name()
@@ -43,14 +46,14 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
 
 		if isValidFormat(filename) {
 			outPath := getImageOutPath(filename, outDir)
-			go HandleResize(ImgWidth, ImgHeight, filename, outPath)
+			filename = inDir + "/" + filename
+			HandleResize(ImgWidth, ImgHeight, filename, outPath)
 		}
 	}
 }
 
 func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) {
 	inImage := openImg(inputPath)
-	log.Println("opica")
 	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
 
 	err := imaging.Save(resizedImg, imgOutPath)
