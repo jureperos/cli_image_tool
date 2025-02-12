@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/disintegration/imaging"
 )
@@ -39,6 +40,8 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
 		log.Panic("Could not get current directory info")
 	}
 
+	var wg sync.WaitGroup
+
 	for _, file := range files {
 		filename := file.Name()
 
@@ -47,9 +50,17 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
 		if isValidFormat(filename) {
 			outPath := getImageOutPath(filename, outDir)
 			filename = inDir + "/" + filename
-			HandleResize(ImgWidth, ImgHeight, filename, outPath)
+
+			wg.Add(1)
+
+			go func(filename string, outPath string) {
+				defer wg.Done()
+				HandleResize(ImgWidth, ImgHeight, filename, outPath)
+			}(filename, outPath)
 		}
 	}
+
+	wg.Wait()
 }
 
 func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) {
