@@ -5,13 +5,17 @@ import (
 	"image"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
 	"github.com/disintegration/imaging"
 )
 
-// TODO:Handle resizing to different formats than input format
+// TODO: Handle resizing to different formats than input format
+// TODO: Implement resource managment for processing big number of files
+// TODO: Propagate errors to the main function
+
 func openImg(inImgPath string) *image.Image {
 	input, err := imaging.Open(inImgPath)
 	if err != nil {
@@ -30,10 +34,6 @@ func isValidFormat(filename string) bool {
 	return true
 }
 
-func getImageOutPath(inImg string, outDir string) string {
-	return outDir + inImg
-}
-
 func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
 	files, err := os.ReadDir(inDir)
 	if err != nil {
@@ -44,12 +44,11 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
 
 	for _, file := range files {
 		filename := file.Name()
-
 		filename = strings.TrimPrefix(filename, "- ")
 
 		if isValidFormat(filename) {
-			outPath := getImageOutPath(filename, outDir)
-			filename = inDir + "/" + filename
+			outPath := filepath.Join(outDir, filename)
+			filename = filepath.Join(inDir, filename)
 
 			wg.Add(1)
 
