@@ -57,8 +57,9 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relS
 
 				if relSize != 0 {
 					HandleResizeRel(outPath, filename, relSize)
+				} else {
+					HandleResize(ImgWidth, ImgHeight, filename, outPath)
 				}
-				HandleResize(ImgWidth, ImgHeight, filename, outPath)
 			}(filename, outPath)
 		}
 	}
@@ -67,9 +68,8 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relS
 }
 
 func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) {
-	log.Println("tau je input path", inputPath)
-	log.Println("tau je output path", imgOutPath)
 	inImage := openImg(inputPath)
+	// TODO: Add more resample filters
 	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
 
 	err := imaging.Save(resizedImg, imgOutPath)
