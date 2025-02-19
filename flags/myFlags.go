@@ -2,7 +2,6 @@ package myFlags
 
 import (
 	"flag"
-	"fmt"
 	"log"
 )
 
@@ -12,6 +11,7 @@ type FlagValues struct {
 	ResizeRel             float64
 	Format                string
 	HandleAll             bool
+	DirPath, OutDirPath   string
 }
 
 var MyFlagVal FlagValues
@@ -30,10 +30,12 @@ func Init() {
 	format := flag.String("format", "jpg", "Optional image format (jpeg, png)")
 
 	handleAll := flag.Bool("all", false, "Handle all images in a directory")
+	directoryPath := flag.String("d", "./", "Directory path for handle all flag")
+	outputDirectoryPath := flag.String("od", "", "Directory path to output all images")
 
 	flag.Parse()
 
-	MyFlagVal = FlagValues{ // TODO: maybe make a singleton with once.Do()?
+	MyFlagVal = FlagValues{
 		InImgPath:  *inputImagePath,
 		OutImgPath: *outputImagePath,
 		ResizeW:    *resizeWidth,
@@ -41,6 +43,8 @@ func Init() {
 		ResizeRel:  *relativeResize,
 		Format:     *format,
 		HandleAll:  *handleAll,
+		DirPath:    *directoryPath,
+		OutDirPath: *outputDirectoryPath,
 	}
 
 	log.Printf(`
@@ -49,16 +53,12 @@ func Init() {
     Width: %v
     Height: %v
     Float: %v
-    Format: %v`,
+    Format: %v
+	Handle all: %v
+	Dir path: %v
+	OutDir path: %v
+	`,
 		MyFlagVal.InImgPath, MyFlagVal.OutImgPath, MyFlagVal.ResizeW,
-		MyFlagVal.ResizeH, MyFlagVal.ResizeRel, MyFlagVal.Format)
-
-	if MyFlagVal.InImgPath == "./" {
-		fmt.Println(MyFlagVal.InImgPath)
-		log.Fatal("No input image provided")
-	}
-
-	if MyFlagVal.OutImgPath == "./" {
-		log.Fatal("No output name provided")
-	}
+		MyFlagVal.ResizeH, MyFlagVal.ResizeRel, MyFlagVal.Format,
+		MyFlagVal.HandleAll, MyFlagVal.DirPath, MyFlagVal.OutDirPath)
 }

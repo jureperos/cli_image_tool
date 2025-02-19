@@ -1,15 +1,26 @@
 package main
 
 import (
-    myFlags "image_resize/flags"
+	"fmt"
+	myFlags "image_resize/flags"
+	"time"
 )
 
 func main() {
-    // TODO: Implement flag for resizing all images in a directory
+	start := time.Now()
 
-    // initialize flags
-    myFlags.Init()
+	// initialize flags
+	myFlags.Init()
 
-    // Handle reformatting flow
-    myFlags.HandleArgs()
+	// Validate
+	myFlags.Validate()
+
+	// Handle reformatting flow
+	myFlags.HandleArgs()
+
+	end := time.Now()
+
+	deltaTime := end.Sub(start)
+
+	fmt.Printf("Elapsed time async: %s\n", deltaTime)
 }
