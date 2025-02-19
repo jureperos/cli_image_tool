@@ -11,7 +11,9 @@ func HandleArgs() {
 			log.Fatal("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-f flag).\nChoose one or the other.")
 		} else {
 			if MyFlagVal.HandleAll == true {
-				imagehandler.HandleAllImg(MyFlagVal.DirPath, MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.OutDirPath)
+				// TODO: if in dir same as outdir prompt user if he wants to overwrite all images
+				// default behaviour should be to add some postfix (eg. _v1)
+				imagehandler.HandleAllImg(MyFlagVal.DirPath, MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.OutDirPath, MyFlagVal.ResizeRel)
 				return
 			}
 			imagehandler.HandleResize(MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.InImgPath, MyFlagVal.OutImgPath)
@@ -22,7 +24,13 @@ func HandleArgs() {
 	}
 
 	if MyFlagVal.ResizeRel != 0 {
-		// TODO:Put an if here to handle all images
+		if MyFlagVal.HandleAll == true {
+			// TODO: if in dir same as outdir prompt user if he wants to overwrite all images
+			// default behaviour should be to add some postfix (eg. _v1)
+			imagehandler.HandleAllImg(MyFlagVal.DirPath, MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.OutDirPath, MyFlagVal.ResizeRel)
+			return
+		}
+
 		imagehandler.HandleResizeRel(MyFlagVal.OutImgPath, MyFlagVal.InImgPath, MyFlagVal.ResizeRel)
 		return
 	}

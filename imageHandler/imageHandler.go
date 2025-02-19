@@ -34,7 +34,7 @@ func isValidFormat(filename string) bool {
 	return true
 }
 
-func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
+func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relSize float64) {
 	files, err := os.ReadDir(inDir)
 	if err != nil {
 		log.Panic("Could not get current directory info")
@@ -54,6 +54,10 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
 
 			go func(filename string, outPath string) {
 				defer wg.Done()
+
+				if relSize != 0 {
+					HandleResizeRel(outPath, filename, relSize)
+				}
 				HandleResize(ImgWidth, ImgHeight, filename, outPath)
 			}(filename, outPath)
 		}
@@ -63,6 +67,8 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string) {
 }
 
 func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) {
+	log.Println("tau je input path", inputPath)
+	log.Println("tau je output path", imgOutPath)
 	inImage := openImg(inputPath)
 	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
 
@@ -73,24 +79,16 @@ func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath stri
 }
 
 func HandleResizeRel(outputPath string, inputPath string, relResize float64) {
-	imageFile, err := os.Open(inputPath)
-	if err != nil {
-		log.Println("Error opening image file", err)
-	}
-	defer imageFile.Close()
+	imageFile := openImg(inputPath)
 
-	config, _, err := image.DecodeConfig(imageFile)
-	if err != nil {
-		log.Println("Error decoding image configuration:", err)
-		return
-	}
+	bounds := (*imageFile).Bounds()
 
-	relSizeF := float64(config.Width) * relResize
+	width := bounds.Dx()
+
+	relSizeF := float64(width) * relResize
 	relSizeI := int(relSizeF)
 
 	HandleResize(relSizeI, 0, inputPath, outputPath)
-
-	log.Printf("width: %v, \n height: %v", config.Width, config.Height)
 }
 
 func HandleFormat(inPath string, outPath string) {

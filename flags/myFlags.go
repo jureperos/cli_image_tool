@@ -35,7 +35,7 @@ func Init() {
 
 	flag.Parse()
 
-	MyFlagVal = FlagValues{ // TODO: maybe make a singleton with once.Do()?
+	MyFlagVal = FlagValues{
 		InImgPath:  *inputImagePath,
 		OutImgPath: *outputImagePath,
 		ResizeW:    *resizeWidth,
