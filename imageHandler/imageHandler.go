@@ -2,6 +2,7 @@ package imagehandler
 
 import (
 	"bufio"
+	"fmt"
 	"image"
 	"log"
 	"os"
@@ -14,15 +15,14 @@ import (
 
 // TODO: Handle resizing to different formats than input format
 // TODO: Implement resource managment for processing big number of files
-// TODO: Propagate errors to the main function
 
-func openImg(inImgPath string) *image.Image {
+func openImg(inImgPath string) (*image.Image, error) {
 	input, err := imaging.Open(inImgPath)
 	if err != nil {
-		log.Fatalf("Failed to open %v", err)
+		return nil, fmt.Errorf("Open image %s: %w", inImgPath, err)
 	}
 
-	return &input
+	return &input, nil
 }
 
 func isValidFormat(filename string) bool {
@@ -37,10 +37,16 @@ func isValidFormat(filename string) bool {
 func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relSize float64) {
 	files, err := os.ReadDir(inDir)
 	if err != nil {
-		log.Panic("Could not get current directory info")
+		log.Panic("Could not get current directory info ", err)
 	}
 
 	var wg sync.WaitGroup
+
+	type imgFile struct {
+		imgName string
+		err     error
+	}
+	errCh := make(chan imgFile)
 
 	for _, file := range files {
 		filename := file.Name()
@@ -55,40 +61,71 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relS
 			go func(filename string, outPath string) {
 				defer wg.Done()
 
+				var imgFile imgFile
+				imgFile.imgName = filename
+
 				if relSize != 0 {
-					HandleResizeRel(outPath, filename, relSize)
+					imgFile.err = HandleResizeRel(outPath, filename, relSize)
 				} else {
-					HandleResize(ImgWidth, ImgHeight, filename, outPath)
+					imgFile.err = HandleResize(ImgWidth, ImgHeight, filename, outPath)
 				}
+
+				errCh <- imgFile
 			}(filename, outPath)
+		} else {
+			valFormats := `"jpg" (or "jpeg"), "png", "gif", "tif" (or "tiff") and "bmp" are supported.`
+			log.Printf("Invalid file format: %s\n Valid formats: %s", filename, valFormats)
 		}
 	}
 
-	wg.Wait()
-}
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
 
-func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) {
-	inImage := openImg(inputPath)
-	// TODO: Add more resample filters
-	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
+	for image := range errCh {
+		if image.err != nil {
+			log.Printf("Error handling %s: %s", image.imgName, image.err)
+		}
 
-	err := imaging.Save(resizedImg, imgOutPath)
-	if err != nil {
-		log.Fatal("Error saving resized image", err)
+		log.Printf("Image \"%s\" complete", image.imgName)
 	}
 }
 
-func HandleResizeRel(outputPath string, inputPath string, relResize float64) {
-	imageFile := openImg(inputPath)
+func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) error {
+	inImage, err := openImg(inputPath)
+	if err != nil {
+		return err
+	}
+	// TODO: Add more resample filters
+	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
+
+	err = imaging.Save(resizedImg, imgOutPath)
+	if err != nil {
+		return fmt.Errorf("Save image %s: %w", imgOutPath, err)
+	}
+
+	return nil
+}
+
+func HandleResizeRel(outputPath string, inputPath string, relResize float64) error {
+	imageFile, err := openImg(inputPath)
+	if err != nil {
+		return err
+	}
 
 	bounds := (*imageFile).Bounds()
-
 	width := bounds.Dx()
 
 	relSizeF := float64(width) * relResize
 	relSizeI := int(relSizeF)
 
-	HandleResize(relSizeI, 0, inputPath, outputPath)
+	err = HandleResize(relSizeI, 0, inputPath, outputPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func HandleFormat(inPath string, outPath string) {

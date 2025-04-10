@@ -11,7 +11,7 @@ import (
 )
 
 func HandleArgs() {
-	// TODO:Refactor this mess
+	// TODO:Refactor
 	if MyFlagVal.ResizeH > 0 || MyFlagVal.ResizeW > 0 {
 		if MyFlagVal.ResizeRel != 0 {
 			log.Fatal("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-f flag).\nChoose one or the other.")
