@@ -2,21 +2,19 @@ package main
 
 import (
 	"fmt"
-	myFlags "image_resize/flags"
+	getFlVal "image_resize/getFlVal"
 	"time"
 )
 
 func main() {
 	start := time.Now()
 
-	// initialize flags
-	myFlags.Init()
+	flVal := getFlVal.GetValues()
 
-	// Validate
-	myFlags.Validate()
+	flVal.Validate()
 
 	// Handle reformatting flow
-	myFlags.HandleArgs()
+	flVal.HandleArgs()
 
 	end := time.Now()
 

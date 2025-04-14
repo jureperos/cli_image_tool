@@ -10,56 +10,61 @@ import (
 	"strings"
 )
 
-func HandleArgs() {
-	// TODO:Refactor
-	if MyFlagVal.ResizeH > 0 || MyFlagVal.ResizeW > 0 {
-		if MyFlagVal.ResizeRel != 0 {
-			log.Fatal("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-f flag).\nChoose one or the other.")
-		} else {
-			if MyFlagVal.HandleAll == true {
-				arePathsSame, _ := arePathsSame(MyFlagVal.DirPath, MyFlagVal.OutDirPath)
-				if arePathsSame {
-					if yesNoPrompt("Do you want to overwrite all images?") {
-						imagehandler.HandleAllImg(MyFlagVal.DirPath, MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.OutDirPath, MyFlagVal.ResizeRel)
-						return
-					} else {
-						log.Println("Change output path to not overwrite it")
-						return
-					}
-				}
-
-				imagehandler.HandleAllImg(MyFlagVal.DirPath, MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.OutDirPath, MyFlagVal.ResizeRel)
-				return
-			}
-			imagehandler.HandleResize(MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.InImgPath, MyFlagVal.OutImgPath)
-			return
-		}
-	} else if MyFlagVal.ResizeH < 0 || MyFlagVal.ResizeW < 0 {
+func (fV FlagValues) HandleArgs() {
+	if fV.ResizeH > 0 || fV.ResizeW > 0 {
+		fV.resize()
+		return
+	} else if fV.ResizeH < 0 || fV.ResizeW < 0 {
 		log.Fatal("Error: Sizes cant' be negative")
 	}
 
-	if MyFlagVal.ResizeRel != 0 {
-		if MyFlagVal.HandleAll == true {
-			arePathsSame, _ := arePathsSame(MyFlagVal.InImgPath, MyFlagVal.OutImgPath)
-			if arePathsSame {
-				if yesNoPrompt("Do you want to overwrite all images?") {
-					imagehandler.HandleAllImg(MyFlagVal.DirPath, MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.OutDirPath, MyFlagVal.ResizeRel)
-					return
-				} else {
-					log.Println("Change output path to not overwrite it")
-					return
-				}
-			}
-			imagehandler.HandleAllImg(MyFlagVal.DirPath, MyFlagVal.ResizeW, MyFlagVal.ResizeH, MyFlagVal.OutDirPath, MyFlagVal.ResizeRel)
-			return
-		}
-
-		imagehandler.HandleResizeRel(MyFlagVal.OutImgPath, MyFlagVal.InImgPath, MyFlagVal.ResizeRel)
+	if fV.ResizeRel != 0 {
+		fV.resizeRel()
 		return
 	}
 
 	// No flags other than format means just reformat
-	imagehandler.HandleFormat(MyFlagVal.InImgPath, MyFlagVal.OutImgPath)
+	imagehandler.HandleFormat(fV.InImgPath, fV.OutImgPath)
+}
+
+func (fV FlagValues) resize() {
+	if fV.ResizeRel != 0 {
+		log.Fatal("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-f flag).\nChoose one or the other.")
+	} else {
+		if fV.HandleAll == true {
+			fV.handleAll(fV.DirPath, fV.OutDirPath)
+
+			imagehandler.HandleAllImg(fV.DirPath, fV.ResizeW, fV.ResizeH, fV.OutDirPath, fV.ResizeRel)
+			return
+		}
+		imagehandler.HandleResize(fV.ResizeW, fV.ResizeH, fV.InImgPath, fV.OutImgPath)
+		return
+	}
+}
+
+func (fV FlagValues) handleAll(inPath string, outPath string) {
+	arePathsSame, _ := arePathsSame(inPath, outPath)
+	if arePathsSame {
+		if yesNoPrompt("Do you want to overwrite all images?") {
+			imagehandler.HandleAllImg(fV.DirPath, fV.ResizeW, fV.ResizeH, fV.OutDirPath, fV.ResizeRel)
+			return
+		} else {
+			log.Println("Change output path to not overwrite it")
+			return
+		}
+	}
+}
+
+func (fV FlagValues) resizeRel() {
+	if fV.HandleAll == true {
+		fV.handleAll(fV.InImgPath, fV.OutImgPath)
+
+		imagehandler.HandleAllImg(fV.DirPath, fV.ResizeW, fV.ResizeH, fV.OutDirPath, fV.ResizeRel)
+		return
+	}
+
+	imagehandler.HandleResizeRel(fV.OutImgPath, fV.InImgPath, fV.ResizeRel)
+	return
 }
 
 func arePathsSame(path1, path2 string) (bool, error) {

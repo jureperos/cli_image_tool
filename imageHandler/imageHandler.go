@@ -128,6 +128,7 @@ func HandleResizeRel(outputPath string, inputPath string, relResize float64) err
 	return nil
 }
 
+// TODO: Propagate errors to caller
 func HandleFormat(inPath string, outPath string) {
 	imgFile, err := os.Open(inPath)
 	defer imgFile.Close()
@@ -138,7 +139,7 @@ func HandleFormat(inPath string, outPath string) {
 
 	dImg, err := imaging.Decode(imgFile)
 	if err != nil {
-		log.Panic("Error decoding image", err)
+		log.Panic("Error decoding image: ", err, "    inPath: ", inPath)
 	}
 
 	file, err := os.Create(outPath)

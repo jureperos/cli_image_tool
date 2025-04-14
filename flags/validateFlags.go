@@ -1,11 +1,11 @@
 package myFlags
 
 import (
-//"fmt"
-//"log"
+// "fmt"
+// "log"
 )
 
-func Validate() {
+func (fV FlagValues) Validate() {
 	//if MyFlagVal.InImgPath == "./" {
 	//	fmt.Println(MyFlagVal.InImgPath)
 	//	log.Fatal("No input image provided")
