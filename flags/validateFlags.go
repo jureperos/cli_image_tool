@@ -1,17 +1,22 @@
 package myFlags
 
 import (
-// "fmt"
-// "log"
+	"fmt"
 )
 
-func (fV FlagValues) Validate() {
-	//if MyFlagVal.InImgPath == "./" {
-	//	fmt.Println(MyFlagVal.InImgPath)
-	//	log.Fatal("No input image provided")
-	//}
+// TODO: finish validating all cases
+func (fV FlagValues) Validate() error {
+	if fV.InImgPath == "./" && !fV.HandleAll {
+		return fmt.Errorf("No input image provided!")
+	}
 
-	//if MyFlagVal.OutImgPath == "./" {
-	//	log.Fatal("No output name provided")
-	//}
+	if fV.ResizeH < 0 || fV.ResizeW < 0 {
+		return fmt.Errorf("Error: Sizes cant' be negative")
+	}
+
+	if fV.ResizeH > 0 || fV.ResizeW > 0 && fV.ResizeRel != 0 {
+		return fmt.Errorf("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-f flag).\nChoose one or the other.")
+	}
+
+	return nil
 }

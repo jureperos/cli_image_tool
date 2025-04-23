@@ -11,7 +11,10 @@ func main() {
 
 	flVal := getFlVal.GetValues()
 
-	flVal.Validate()
+	err := flVal.Validate()
+	if err != nil {
+		fmt.Printf("Validation error: %v", err)
+	}
 
 	// Handle reformatting flow
 	flVal.HandleArgs()
