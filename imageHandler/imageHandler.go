@@ -2,8 +2,8 @@ package imagehandler
 
 import (
 	"bufio"
+	"fmt"
 	"image"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,33 +14,20 @@ import (
 
 // TODO: Handle resizing to different formats than input format
 // TODO: Implement resource managment for processing big number of files
-// TODO: Propagate errors to the main function
 
-func openImg(inImgPath string) *image.Image {
-	input, err := imaging.Open(inImgPath)
-	if err != nil {
-		log.Fatalf("Failed to open %v", err)
-	}
-
-	return &input
-}
-
-func isValidFormat(filename string) bool {
-	_, err := imaging.FormatFromFilename(filename)
-	if err != nil {
-		return false
-	}
-
-	return true
-}
-
-func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relSize float64) {
+func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relSize float64) error {
 	files, err := os.ReadDir(inDir)
 	if err != nil {
-		log.Panic("Could not get current directory info")
+		return fmt.Errorf("Could not get current directory info %v", err)
 	}
 
 	var wg sync.WaitGroup
+
+	type imgFile struct {
+		imgName string
+		err     error
+	}
+	errCh := make(chan imgFile)
 
 	for _, file := range files {
 		filename := file.Name()
@@ -55,69 +42,122 @@ func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relS
 			go func(filename string, outPath string) {
 				defer wg.Done()
 
+				var imgFile imgFile
+				imgFile.imgName = filename
+
 				if relSize != 0 {
-					HandleResizeRel(outPath, filename, relSize)
+					imgFile.err = ResizeRel(outPath, filename, relSize)
 				} else {
-					HandleResize(ImgWidth, ImgHeight, filename, outPath)
+					imgFile.err = Resize(ImgWidth, ImgHeight, filename, outPath)
 				}
+
+				errCh <- imgFile
 			}(filename, outPath)
+		} else {
+			valFormats := `"jpg" (or "jpeg"), "png", "gif", "tif" (or "tiff") and "bmp" are supported.`
+			fmt.Printf("\nInvalid file format: %s\n Valid formats: %s\n\n", filename, valFormats)
 		}
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
+
+	for image := range errCh {
+		if image.err != nil {
+			fmt.Printf("Error handling %s: %s\n", image.imgName, image.err)
+		}
+
+		fmt.Printf("Image \"%s\" complete\n", image.imgName)
+	}
+
+	return nil
 }
 
-func HandleResize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) {
-	inImage := openImg(inputPath)
+func Resize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) error {
+	inImage, err := openImg(inputPath)
+	if err != nil {
+		return err
+	}
 	// TODO: Add more resample filters
 	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
 
-	err := imaging.Save(resizedImg, imgOutPath)
+	err = imaging.Save(resizedImg, imgOutPath)
 	if err != nil {
-		log.Fatal("Error saving resized image", err)
+		return fmt.Errorf("Save image %s: %w", imgOutPath, err)
 	}
+
+	return nil
 }
 
-func HandleResizeRel(outputPath string, inputPath string, relResize float64) {
-	imageFile := openImg(inputPath)
+func ResizeRel(outputPath string, inputPath string, relResize float64) error {
+	imageFile, err := openImg(inputPath)
+	if err != nil {
+		return err
+	}
 
 	bounds := (*imageFile).Bounds()
-
 	width := bounds.Dx()
 
 	relSizeF := float64(width) * relResize
 	relSizeI := int(relSizeF)
 
-	HandleResize(relSizeI, 0, inputPath, outputPath)
+	err = Resize(relSizeI, 0, inputPath, outputPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func HandleFormat(inPath string, outPath string) {
+func HandleFormat(inPath string, outPath string) error {
 	imgFile, err := os.Open(inPath)
 	defer imgFile.Close()
 
 	if err != nil {
-		log.Panic("Error opening image file", err)
+		return fmt.Errorf("Error opening image file: %v", err)
 	}
 
 	dImg, err := imaging.Decode(imgFile)
 	if err != nil {
-		log.Panic("Error decoding image", err)
+		return fmt.Errorf("Error decoding image: %v; inPath: %v", err, inPath)
 	}
 
 	file, err := os.Create(outPath)
 	if err != nil {
-		log.Panic("Could not create writer", err)
+		return fmt.Errorf("Could not create writer: %v", err)
 	}
 
 	w := bufio.NewWriter(file)
 
 	format, err := imaging.FormatFromFilename(outPath)
 	if err != nil {
-		log.Fatal("Error: could not reat format from output string", err)
+		return fmt.Errorf("Could not reat format from output string: %v", err)
 	}
 
 	err = imaging.Encode(w, dImg, format)
 	if err != nil {
-		log.Fatal("Error could not encode image", err)
+		return fmt.Errorf("Could not encode image: %v", err)
 	}
+
+	return nil
+}
+
+func openImg(inImgPath string) (*image.Image, error) {
+	input, err := imaging.Open(inImgPath)
+	if err != nil {
+		return nil, fmt.Errorf("Open image %s: %w", inImgPath, err)
+	}
+
+	return &input, nil
+}
+
+func isValidFormat(filename string) bool {
+	_, err := imaging.FormatFromFilename(filename)
+	if err != nil {
+		return false
+	}
+
+	return true
 }

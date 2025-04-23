@@ -2,21 +2,25 @@ package main
 
 import (
 	"fmt"
-	myFlags "image_resize/flags"
+	getFlVal "image_resize/getFlVal"
 	"time"
 )
 
 func main() {
+	// TODO: Remove timer when merging to main
 	start := time.Now()
 
-	// initialize flags
-	myFlags.Init()
+	flVal := getFlVal.GetValues()
 
-	// Validate
-	myFlags.Validate()
+	err := flVal.Validate()
+	if err != nil {
+		fmt.Printf("\nValidation error: %v\n", err)
+	}
 
-	// Handle reformatting flow
-	myFlags.HandleArgs()
+	err = flVal.HandleArgs()
+	if err != nil {
+		fmt.Printf("\nError handling images: %v\n", err)
+	}
 
 	end := time.Now()
 
