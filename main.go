@@ -7,17 +7,20 @@ import (
 )
 
 func main() {
+	// TODO: Remove timer when merging to main
 	start := time.Now()
 
 	flVal := getFlVal.GetValues()
 
 	err := flVal.Validate()
 	if err != nil {
-		fmt.Printf("Validation error: %v", err)
+		fmt.Printf("\nValidation error: %v\n", err)
 	}
 
-	// Handle reformatting flow
-	flVal.HandleArgs()
+	err = flVal.HandleArgs()
+	if err != nil {
+		fmt.Printf("\nError handling images: %v\n", err)
+	}
 
 	end := time.Now()
 
