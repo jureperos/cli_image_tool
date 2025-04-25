@@ -1,13 +1,13 @@
-package getflval
+package fl_val
 
 import (
 	"flag"
-	"image_resize/flags"
+	cli_flags "image_resize/flags"
 	"log"
 )
 
-func GetValues() myFlags.FlagValues {
-	var MyFlagVal myFlags.FlagValues
+func GetValues() cli_flags.FlagValues {
+	var MyFlagVal cli_flags.FlagValues
 
 	inputImagePath := flag.String("in", "./", "Path to the input file")
 	outputImagePath := flag.String("out", "./", `Path to the output file,
@@ -27,7 +27,7 @@ func GetValues() myFlags.FlagValues {
 
 	flag.Parse()
 
-	MyFlagVal = myFlags.FlagValues{
+	MyFlagVal = cli_flags.FlagValues{
 		InImgPath:  *inputImagePath,
 		OutImgPath: *outputImagePath,
 		ResizeW:    *resizeWidth,

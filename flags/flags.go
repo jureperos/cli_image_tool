@@ -1,4 +1,4 @@
-package myFlags
+package cli_flags
 
 type FlagValues struct {
 	InImgPath, OutImgPath string

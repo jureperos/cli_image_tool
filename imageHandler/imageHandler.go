@@ -111,7 +111,7 @@ func ResizeRel(outputPath string, inputPath string, relResize float64) error {
 	return nil
 }
 
-func HandleFormat(inPath string, outPath string) error {
+func Format(inPath string, outPath string) error {
 	imgFile, err := os.Open(inPath)
 	defer imgFile.Close()
 

@@ -1,4 +1,4 @@
-package myFlags
+package cli_flags
 
 import (
 	"fmt"

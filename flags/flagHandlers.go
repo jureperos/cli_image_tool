@@ -1,4 +1,4 @@
-package myFlags
+package cli_flags
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ func (fV FlagValues) HandleArgs() error {
 	}
 
 	// No flags other than format means just reformat
-	return imagehandler.HandleFormat(fV.InImgPath, fV.OutImgPath)
+	return imagehandler.Format(fV.InImgPath, fV.OutImgPath)
 }
 
 func (fV FlagValues) resizeWH() error {
