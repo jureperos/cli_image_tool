@@ -6,5 +6,4 @@ type FlagValues struct {
 	ResizeRel             float64
 	Format                string
 	HandleAll             bool
-	DirPath, OutDirPath   string
 }

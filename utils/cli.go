@@ -34,7 +34,6 @@ func YesNoPrompt(question string) bool {
 }
 
 func ArePathsSame(path1, path2 string) (bool, error) {
-	// Resolve symlinks and clean paths
 	abs1, err := filepath.EvalSymlinks(path1)
 	if err != nil {
 		return false, fmt.Errorf("error resolving symlink for %q: %v", path1, err)
@@ -45,7 +44,6 @@ func ArePathsSame(path1, path2 string) (bool, error) {
 		return false, fmt.Errorf("error resolving symlink for %q: %v", path2, err)
 	}
 
-	// Clean paths to normalize them
 	clean1 := filepath.Clean(abs1)
 	clean2 := filepath.Clean(abs2)
 
