@@ -5,7 +5,6 @@ import (
 	"image_resize/utils"
 )
 
-// TODO: finish validating all cases
 func (fV FlagValues) Validate() error {
 	if fV.InImgPath == "./" && !fV.HandleAll {
 		return fmt.Errorf("No input image provided!")
