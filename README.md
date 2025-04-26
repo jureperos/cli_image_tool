@@ -2,7 +2,7 @@
 
 A straightforward command-line interface for image resizing.
 
-This tool allows you to easily resize images from your terminal. Simply provide the input image path, desired output path and dimensions, and let `cli_image_tool` handle the rest. It's currently under active development, with exciting new features and improvements on the horizon.
+This tool allows you to easily resize images from your terminal. Simply provide the input image path, desired output path and dimensions. It's currently under active development, with new features and improvements on the horizon.
 
 ## Getting Started
 
@@ -26,7 +26,7 @@ This tool leverages the excellent [Go imaging package](https://github.com/disint
 ## Important Notes
 
 * **Formatting with `-all`:** Please be aware that reformatting images is not currently supported when using the `-all` flag. To convert the format of a single image, specify the desired extension in the `-out` flag (e.g., `-out image.png`).
-* **Resource Limitations:** The tool does not yet implement resource management. When processing a large number of images with the `-all` flag, this could potentially lead to issues such as excessive memory usage, reaching file descriptor limits, or disk I/O bottlenecks. Exercise caution when processing very large directories.
+* **Resource Limitations:** The tool does not yet implement resource management. When processing a large number of images with the `-all` flag, this could potentially lead to issues such as excessive memory usage, reaching file descriptor limits, or disk I/O bottlenecks. Exercise caution if processing very large directories.
 
 ## Future Enhancements
 
