@@ -1,6 +1,7 @@
 package cli_flags
 
 import (
+	"fmt"
 	"image_resize/imageHandler"
 )
 
@@ -13,8 +14,7 @@ func (fV FlagValues) HandleArgs() error {
 		return fV.resizeRel()
 	}
 
-	// No flags other than format means just reformat
-	return imagehandler.Format(fV.InImgPath, fV.OutImgPath)
+	return fmt.Errorf("Error: No resize flag specified")
 }
 
 func (fV FlagValues) resizeWH() error {

@@ -1,7 +1,6 @@
 package imagehandler
 
 import (
-	"bufio"
 	"fmt"
 	"image"
 	"os"
@@ -11,9 +10,6 @@ import (
 
 	"github.com/disintegration/imaging"
 )
-
-// TODO: Handle resizing to different formats than input format
-// TODO: Implement resource managment for processing big number of files
 
 func HandleAllImg(inDir string, ImgWidth int, ImgHeight int, outDir string, relSize float64) error {
 	files, err := os.ReadDir(inDir)
@@ -80,7 +76,7 @@ func Resize(ImgWidth int, ImgHeight int, inputPath string, imgOutPath string) er
 	if err != nil {
 		return err
 	}
-	// TODO: Add more resample filters
+
 	resizedImg := imaging.Resize(*inImage, ImgWidth, ImgHeight, imaging.Lanczos)
 
 	err = imaging.Save(resizedImg, imgOutPath)
@@ -106,39 +102,6 @@ func ResizeRel(outputPath string, inputPath string, relResize float64) error {
 	err = Resize(relSizeI, 0, inputPath, outputPath)
 	if err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func Format(inPath string, outPath string) error {
-	imgFile, err := os.Open(inPath)
-	defer imgFile.Close()
-
-	if err != nil {
-		return fmt.Errorf("Error opening image file: %v", err)
-	}
-
-	dImg, err := imaging.Decode(imgFile)
-	if err != nil {
-		return fmt.Errorf("Error decoding image: %v; inPath: %v", err, inPath)
-	}
-
-	file, err := os.Create(outPath)
-	if err != nil {
-		return fmt.Errorf("Could not create writer: %v", err)
-	}
-
-	w := bufio.NewWriter(file)
-
-	format, err := imaging.FormatFromFilename(outPath)
-	if err != nil {
-		return fmt.Errorf("Could not reat format from output string: %v", err)
-	}
-
-	err = imaging.Encode(w, dImg, format)
-	if err != nil {
-		return fmt.Errorf("Could not encode image: %v", err)
 	}
 
 	return nil
