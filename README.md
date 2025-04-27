@@ -10,14 +10,14 @@ To use the tool, you'll need to either compile the Go source code or run it dire
 
 ## Flags
 
-| Flag      | Description                                                                                                | Example                                                                    |
-| :-------- | :--------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `-in`     | Specifies the input path to the image file or directory.                                                  | `-in ./myImage.jpg` or `-in ./myImgDir/` (when used with the `-all` flag) |
-| `-out`    | Defines the output path, desired filename, and format for the resized image(s).                            | `-out ./some_folder/resizedImage.png` or `-out ./myImgDir/resizedImgs/` (when used with `-all`) |
-| `-width`  | Sets the desired width of the output image in pixels.                                                     | `-width 580`                                                              |
-| `-height` | Sets the desired height of the output image in pixels.                                                    | `-height 400`                                                              |
-| `-rel`    | Resizes the image proportionally based on a relative factor (e.g., `0.5` for 50% of the original size). | `-rel 0.5`                                                              |
-| `-all`    | Processes all image files within the directory specified by the `-in` flag.                               | `-all`                                                                    |
+| Flag        | Description                                                                                                | Example                                                                    |
+| :---------- | :--------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `-in`       | Specifies the input path to the image file or directory.                                                  | `-in ./myImage.jpg` or `-in ./myImgDir/` (when used with the `-all` flag) |
+| `-out`      | Defines the output path, desired filename, and format for the resized image(s).                            | `-out ./some_folder/resizedImage.png` or `-out ./myImgDir/resizedImgs/` (when used with `-all`) |
+| `-width`    | Sets the desired width of the output image in pixels.                                                     | `-width 580`                                                              |
+| `-height`   | Sets the desired height of the output image in pixels.                                                    | `-height 400`                                                              |
+| `-rel`      | Resizes the image proportionally based on a relative factor (e.g., `0.5` for 50% of the original size). | `-rel 0.5`                                                              |
+| `-all`      | Processes all image files within the directory specified by the `-in` flag.                               | `-all`                                                                    |
 
 ## Resampling
 
