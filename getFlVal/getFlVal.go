@@ -16,8 +16,7 @@ func GetValues() cli_flags.FlagValues {
 	resizeWidth := flag.Int("width", 0, "Pixel resize width")
 	resizeHeight := flag.Int("height", 0, "Pixel resize height")
 
-	relativeResize := flag.Float64("rel", 0, `Float that resizes the new image
-    relative to the original image`)
+	relativeResize := flag.Float64("rel", 0, "Decimal for relative resize")
 
 	handleAll := flag.Bool("all", false, "Handle all images in a directory")
 
