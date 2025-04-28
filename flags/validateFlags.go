@@ -10,7 +10,7 @@ func (fV FlagValues) Validate() error {
 		return fmt.Errorf("No input image provided!")
 	}
 
-	err := valPath(fV.InImgPath, fV.OutImgPath)
+	err := pathCheck(fV.InImgPath, fV.OutImgPath, fV.HandleAll)
 	if err != nil {
 		return err
 	}
@@ -19,8 +19,8 @@ func (fV FlagValues) Validate() error {
 		return fmt.Errorf("Error: Sizes cant' be negative")
 	}
 
-	if fV.ResizeH > 0 || fV.ResizeW > 0 && fV.ResizeRel != 0 {
-		return fmt.Errorf("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-f flag).\nChoose one or the other.")
+	if (fV.ResizeH > 0 || fV.ResizeW > 0) && fV.ResizeRel != 0 {
+		return fmt.Errorf("Error: Cannot have output width or height (-w, -h) specified together with relative output size (-rel flag).\nChoose one or the other.")
 	}
 
 	if fV.InImgPath == "" || fV.OutImgPath == "" {
@@ -39,23 +39,30 @@ func (fV FlagValues) Validate() error {
 	return nil
 }
 
-func valPath(inPath string, outPath string) error {
-	inPathExists, err := utils.Exists(inPath)
+func pathCheck(inPath, outPath string, handleAll bool) error {
+	err := valPath(inPath)
 	if err != nil {
-		return fmt.Errorf("Error checking input path: %v", err)
+		return fmt.Errorf("Input error\n %v", err)
 	}
 
-	if !inPathExists {
-		return fmt.Errorf("Input path does not exist")
+	if handleAll {
+		err = valPath(outPath)
+		if err != nil {
+			return fmt.Errorf("Output error\n %v", err)
+		}
 	}
 
-	outPathExists, err := utils.Exists(outPath)
+	return nil
+}
+
+func valPath(path string) error {
+	pathExists, err := utils.Exists(path)
 	if err != nil {
-		return fmt.Errorf("Error checking output path: %v", err)
+		return fmt.Errorf("Error checking: %v", err)
 	}
 
-	if !outPathExists {
-		return fmt.Errorf("Output path does not exist")
+	if !pathExists {
+		return fmt.Errorf("Path does not exist")
 	}
 
 	return nil

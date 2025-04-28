@@ -16,7 +16,7 @@ func GetValues() cli_flags.FlagValues {
 	resizeWidth := flag.Int("width", 0, "Optional width to resize width")
 	resizeHeight := flag.Int("height", 0, "Optional width to resize height")
 
-	relativeResize := flag.Float64("f", 0, `Float that resizes the new image
+	relativeResize := flag.Float64("rel", 0, `Float that resizes the new image
     relative to the original image`)
 
 	format := flag.String("format", "jpg", "Optional image format (jpeg, png)")
@@ -40,7 +40,7 @@ func GetValues() cli_flags.FlagValues {
     Output path: %v
     Width: %v
     Height: %v
-    Float: %v
+    Relative resize: %v
     Format: %v
 	Handle all: %v`,
 		MyFlagVal.InImgPath, MyFlagVal.OutImgPath, MyFlagVal.ResizeW,
