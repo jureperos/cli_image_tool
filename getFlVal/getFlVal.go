@@ -2,7 +2,6 @@ package fl_val
 
 import (
 	"flag"
-	"fmt"
 	cli_flags "image_resize/flags"
 )
 
@@ -30,16 +29,6 @@ func GetValues() cli_flags.FlagValues {
 		ResizeRel:  *relativeResize,
 		HandleAll:  *handleAll,
 	}
-
-	fmt.Printf(`
-    Input path: %v
-    Output path: %v
-    Width: %v
-    Height: %v
-    Relative resize: %v
-	Handle all: %v`,
-		MyFlagVal.InImgPath, MyFlagVal.OutImgPath, MyFlagVal.ResizeW,
-		MyFlagVal.ResizeH, MyFlagVal.ResizeRel, MyFlagVal.HandleAll)
 
 	return MyFlagVal
 }
