@@ -10,6 +10,11 @@ func (fV FlagValues) Validate() error {
 		return fmt.Errorf("No input image provided!")
 	}
 
+	err := valPath(fV.InImgPath, fV.OutImgPath)
+	if err != nil {
+		return err
+	}
+
 	if fV.ResizeH < 0 || fV.ResizeW < 0 {
 		return fmt.Errorf("Error: Sizes cant' be negative")
 	}
@@ -24,11 +29,33 @@ func (fV FlagValues) Validate() error {
 
 	arePathsSame, _ := utils.ArePathsSame(fV.InImgPath, fV.OutImgPath)
 	if arePathsSame {
-		if utils.YesNoPrompt("Having the same input and output paths will overwrite images. Proceed?") {
+		if utils.YesNoPrompt("Having the same input and output paths will overwrite images! Proceed?") {
 			return nil
 		} else {
 			return fmt.Errorf("Change output path to prevent overwrite!")
 		}
+	}
+
+	return nil
+}
+
+func valPath(inPath string, outPath string) error {
+	inPathExists, err := utils.Exists(inPath)
+	if err != nil {
+		return fmt.Errorf("Error checking input path: %v", err)
+	}
+
+	if !inPathExists {
+		return fmt.Errorf("Input path does not exist")
+	}
+
+	outPathExists, err := utils.Exists(outPath)
+	if err != nil {
+		return fmt.Errorf("Error checking output path: %v", err)
+	}
+
+	if !outPathExists {
+		return fmt.Errorf("Output path does not exist")
 	}
 
 	return nil

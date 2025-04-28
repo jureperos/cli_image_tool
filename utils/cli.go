@@ -49,3 +49,16 @@ func ArePathsSame(path1, path2 string) (bool, error) {
 
 	return clean1 == clean2, nil
 }
+
+func Exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	return false, err
+}
