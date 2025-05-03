@@ -1,17 +1,23 @@
 package main
 
 import (
-	myFlags "image_resize/flags"
+	"fmt"
+	getFlVal "image_resize/getFlVal"
+	"os"
 )
 
 func main() {
-    // TODO: Implement relative resizing operation
-    // TODO: Implement flag for resizing all images in a directory
+	flVal := getFlVal.GetValues()
 
-    // initialize flags
-    myFlags.Init()
+	err := flVal.Validate()
+	if err != nil {
+		fmt.Printf("\nValidation error: %v\n", err)
+		os.Exit(1)
+	}
 
-    // Handle reformatting flow
-    myFlags.HandleArgs()
-
+	err = flVal.HandleArgs()
+	if err != nil {
+		fmt.Printf("\nError handling images: %v\n", err)
+		os.Exit(1)
+	}
 }
