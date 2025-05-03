@@ -33,6 +33,6 @@ This tool leverages the excellent [Go imaging package](https://github.com/disint
 The following features are planned for future releases:
 
 * Implementation of multiple resampling algorithms for greater flexibility.
-* Development of custom resampling methods and removal of external dependencies.
+* Development of custom resampling methods.
 * Adjustable resource rate limiting to improve stability when processing directories with the `-all` flag.
 * Support for reformatting images when using the `-all` flag.
